@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+    <br><br>
+    <div>
+    <span>Мы переходим к решению задачи прогнозирования цен на жилье с помощью трех методов:..
+ Данные мы берем со страницы kaggle.com (https://www.kaggle.com/code/aminizahra/polynomial-regression).
+ Наш интерфейс разделен на 3 части:
+ Часть 01: используется для обучения моделей на следующих этапах:
+  шаг 01: загрузите данные из файла .csv в static каталог.
+ - шаг 02: подготовьте модели с данными, соответствующими вышеуказанным алгоритмам.
+ - шаг 03: после обучения мы сохраняем модель в трех файлах, соответствующих 3 алгоритмам: polymodel.PKL (полиномиальная регрессия),
+gb_model.pkl (градиентный бустинг), rnn_model.h5 (рекуррентная нейронная сеть).
+ Часть 02:...
+    </span>
+    </div>
+    <div class="container shadow p-3 mb-5 bg-body rounded">
+        <form action="{{ url_for('page.training') }}" method="post">
+            <ol>
+                <li>Method Polynomial Regression</li>
+                {% if text_out %}
+                    <span style="color: blue">{{ text_out[0] }}</span><br>
+                    <span style="color: blue">Mean_absolute_error:{{ metrics[0][0] }}</span><br>
+                    <span style="color: blue">mean_squared_error:{{ metrics[0][1] }}</span>
+                {% endif %}
+                <li>Method Gradient Boosting</li>
+                {% if text_out %}
+                    <span style="color: blue">{{ text_out[1] }}</span><br>
+                    <span style="color: blue">Mean_absolute_error:{{ metrics[1][0] }}</span><br>
+                    <span style="color: blue">mean_squared_error:{{ metrics[1][1] }}</span>
+                {% endif %}
+                <li>Recurent Neural Network</li>
+                {% if text_out %}
+                    <span style="color: blue">{{ text_out[2] }}</span><br>
+                    <span style="color: blue">Mean_absolute_error:{{ metrics[2][0] }}</span><br>
+                    <span style="color: blue">mean_squared_error:{{ metrics[2][1] }}</span>
+                {% endif %}
+            </ol>
+            <button type="submit" class="btn btn-primary">Обучить модель</button>
+        </form>
+    </div>
+    <div class="container shadow p-3 mb-5 bg-body rounded">
+        <span>Нажмите кнопку ниже, чтобы протестировать данные...</span>
+        <form action="{{ url_for('page.testing') }}" method="post">
+            {% if mss %}
+                <h5>{{ mss }}</h5>
+            {% endif %}
+            <button type="submit" class="btn btn-primary" name="testing">Протестировать модель</button>
+        </form>
+    </div>
+
+    <div class="container shadow p-3 mb-5 bg-body rounded">
+        <form action="{{ url_for('page.result') }}" method="post">
+            <button type="submit" class="btn btn-primary">Показать результаты прогноза</button>
+            {% if results %}
+                <div class="overflow-auto">
+                    <table class="table table-sm">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Real price</th>
+                            <th scope="col">Price_regression</th>
+                            <th scope="col">Price_Gradient Boosting</th>
+                            <th scope="col">Price_RNN</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for r in results %}
+                            <tr>
+                                <td>{{ r.id }}</td>
+                                <td>{{ r.Real_result }}</td>
+                                <td>{{ r.PL_regression }}</td>
+                                <td>{{ r.Gradient_boosting }}</td>
+                                <td>{{ r.RNN }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </form>
+    </div>
+
+{% endblock %}
